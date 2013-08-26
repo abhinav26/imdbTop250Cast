@@ -51,13 +51,15 @@ class GetTopMovies
 		movie_page = get_page_source(link)
 		return if movie_page == ""
 		counter = 1
-		cast_names = []  
-		begin
-			counter += 1
-			name = movie_page.xpath("//table[@class=\"cast_list\"]/tr[#{counter}]/td[2]").text.strip
-			cast_names << name if name != ""
-			add_movie_to_actor(name, movie_name)
-		end while name != ""
+		cast_names = []
+
+		table = movie_page.xpath("//table[@class=\"cast_list\"]")
+
+		table.css('tr td[2]').each do |name|
+			cast_names << name.text.strip
+			add_movie_to_actor(name.text.strip, movie_name)
+		end
+		
 		cast_names
 	end
 
@@ -83,7 +85,4 @@ class GetTopMovies
 	end
 end
 
-obj = GetTopMovies.new(3)
-obj.get_top_movies
-obj.get_movies_by_actor("Morgan Freeman")
-obj.get_movies_by_actor("Al Pacino")
+
