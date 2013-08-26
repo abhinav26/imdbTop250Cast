@@ -5,9 +5,10 @@ require 'open-uri'
 class GetTopMovies
 	attr_accessor :actor_involved_in
 
+	TOP_250_LINK = "IMDbTop250.html"#"http://imdb.org/chart/top"
+
 	def initialize(number)
 		@number = number
-		@top_250_link = "http://imdb.org/chart/top"
 		@actor_involved_in = Hash.new { |hash, key| hash[key] =[]  }
 	end
 
@@ -15,17 +16,16 @@ class GetTopMovies
 		str = "No Movies Selected" if @number<1 
 		str = "Too many Movies Selected" if @number>250
 		
-		if str != nil
+		if str
 			puts str 
 			return str
 		end
 
-		page = get_page_source(@top_250_link)
-
+		page = get_page_source(TOP_250_LINK)
 		hash = get_top_n_movies_pages(page)
 
 		hash.each do |movie_name, link|
-			puts "\n" + movie_names
+			puts "\n" + movie_name
 			cast_names = get_cast_movie(movie_name, link)
 			puts "Cast : " + cast_names.join(", ")
 		end
@@ -34,11 +34,16 @@ class GetTopMovies
 
 	def get_top_n_movies_pages(page)
 		hash = {}
-		for i in 2..@number+1 do
-			cell = page.xpath("//table[2]/tr[#{i}]/td[3]")
-			name = cell.text
-			page_link = cell.css('a').map{ |link| hash[name] = "http://www.imdb.com"<<link['href'] }
+
+		counter=1
+		table = page.xpath("//table[2]")
+		puts table.class
+		table.css('a').each do |link|
+			hash[link.text] = "http://www.imdb.com" + link[:href]
+			counter += 1
+			break if counter>@number
 		end
+
 		hash
 	end
 

@@ -16,8 +16,8 @@ describe GetTopMovies do
 	context "Invalid Argument passed" do
 		describe "#get_top_movies"
 			it "ends when argument zero is passed" do
-				@get_movies = GetTopMovies.new(0)
-				@get_movies.get_top_movies.should eql "No Movies Selected" 
+				get_movies = GetTopMovies.new(0)
+				get_movies.get_top_movies.should eql "No Movies Selected" 
 			end
 
 			it "ends when argument >250 is passed" do
@@ -33,18 +33,8 @@ describe GetTopMovies do
 			@get_movies = GetTopMovies.new(3)
 		end
 
-		describe "#initialize" do
-			it "initializes the hash correctly" do
-				hash = @get_movies.instance_variable_get(:@actor_involved_in)
-				hash["test"] << "test1"
-				hash["test"] << "test2"
-				hash["test"].should eql ["test1", "test2"]
-				hash["test2"].should eql []
-			end
-		end
-
 		describe "#get_top_n_movies_pages" do
-			it "checks if has is of correct size" do
+			it "checks if hash is of correct size" do
 				page = @get_movies.get_page_source("IMDbTop250.html")
 				hash = @get_movies.get_top_n_movies_pages(page)
 				hash.length.should eql 3
