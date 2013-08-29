@@ -78,7 +78,7 @@ class GetTopMovies
 		end
 	end
 
-	#private :get_page_source , :add_movie_to_actor, :get_cast_movie, :get_top_n_movies_pages, :display_movies_with_cast
+	private :get_page_source , :add_movie_to_actor, :get_cast_movie, :get_top_n_movies_pages, :display_movies_with_cast
 
 end
 
