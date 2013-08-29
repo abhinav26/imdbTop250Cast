@@ -1,20 +1,20 @@
 require_relative 'imdb.rb'
 
-def new_list(num)
-	list = GetTopMovies.new(num)
+def new_list(number)
+	list = GetTopMovies.new(number)
 	list.get_top_movies
 	puts "\nget movies by actors? (yes/no)"
-	str = gets.chomp
+	choice = gets.chomp
 
-	while(str.downcase == "yes")
+	while(choice.downcase == "yes")
 		puts "Name?"
 		name = gets.chomp
 		list.get_movies_by_actor(name)
 		puts "Again? (yes/no)"
-		str = gets.chomp
+		choice = gets.chomp
 	end 
 end
 
-puts "Number of movies to be processed?"
-num = gets.chomp
-new_list(num.to_i)
+puts "Number of movies to be processed?(integer)"
+number_of_movies = gets.chomp
+new_list(number_of_movies.to_i)

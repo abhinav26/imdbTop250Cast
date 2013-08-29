@@ -9,50 +9,44 @@ class GetTopMovies
 
 	def initialize(number)
 		@number = number
-		@actor_involved_in = Hash.new { |hash, key| hash[key] =[]  }
+		@actor_involved_in = Hash.new { |hash, key| hash[key] =[] }
 	end
 
 	def get_top_movies
-		str = "No Movies Selected" if @number<1 
-		str = "Too many Movies Selected" if @number>250
-		
-		if str
-			puts str 
-			return str
+		if @number<1
+			puts "No Movies Selected"
+			return
+		elsif @number>250
+			puts "Too many Movies Selected"
+			return
 		end
+		hash = get_top_n_movies_pages
+		display_movies_with_cast(hash)
+	end
 
-		page = get_page_source(TOP_250_LINK)
-		hash = get_top_n_movies_pages(page)
-
+	def display_movies_with_cast(hash)
 		hash.each do |movie_name, link|
 			puts "\n" + movie_name
 			cast_names = get_cast_movie(movie_name, link)
 			puts "Cast : " + cast_names.join(", ")
 		end
-
 	end
 
-	def get_top_n_movies_pages(page)
+	def get_top_n_movies_pages
+		page = get_page_source(TOP_250_LINK)
+		return if page == ""
 		hash = {}
-
-		counter=1
-		table = page.xpath("//table[2]")
-		puts table.class
-		table.css('a').each do |link|
-			hash[link.text] = "http://www.imdb.com" + link[:href]
-			counter += 1
-			break if counter>@number
+		list_of_links = page.xpath("//table[2]").css('a')
+		@number.times do |counter|
+			hash[list_of_links[counter].text] = "http://www.imdb.com" + list_of_links[counter][:href]
 		end
-
 		hash
 	end
 
 	def get_cast_movie(movie_name, link)
 		movie_page = get_page_source(link)
 		return if movie_page == ""
-		counter = 1
 		cast_names = []
-
 		table = movie_page.xpath("//table[@class=\"cast_list\"]")
 
 		table.css('tr td[2]').each do |name|
@@ -69,9 +63,9 @@ class GetTopMovies
 
 	def get_page_source(link)
 		begin
-			page = Nokogiri::HTML(open(link))  
+			Nokogiri::HTML(open(link))  
 		rescue
-			return ""
+			""
 		end
 	end
 
@@ -83,6 +77,9 @@ class GetTopMovies
 			puts "Movies : " + @actor_involved_in[name].join(", ")
 		end
 	end
+
+	#private :get_page_source , :add_movie_to_actor, :get_cast_movie, :get_top_n_movies_pages, :display_movies_with_cast
+
 end
 
 
